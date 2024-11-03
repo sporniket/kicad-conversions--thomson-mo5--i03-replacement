@@ -758,7 +758,7 @@
     (property "Value" "47nF" (at 166.37 142.24 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (at 165.1 139.7 0)
+    (property "Footprint" "commons-passives_THT:Passive_THT_capacitor_mlcc_W2.54mm_L5.08mm" (at 165.1 139.7 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 165.1 139.7 0)
