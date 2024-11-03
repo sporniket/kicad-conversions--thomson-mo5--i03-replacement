@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "hm7603")(type "Legacy")(uri "${KIPRJMOD}/kicad-symbols-generated/ics/commons/hm7603.lib")(options "")(descr ""))
+  (lib (name "gal16v8")(type "Legacy")(uri "${KIPRJMOD}/kicad-symbols-generated/ics/commons/gal16v8.lib")(options "")(descr ""))
+)
