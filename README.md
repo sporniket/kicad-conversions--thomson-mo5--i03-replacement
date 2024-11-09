@@ -25,7 +25,11 @@ You can copy, modify, distribute and perform the work, even for commercial purpo
 
 ### Release notes
 
-> no release yet
+#### Release v1.0.0-rc1
+
+**Hardware only** 
+
+Contains schematics in PDF files, and gerber archive.
 
 ## 2. What should you know before using **Replacement of I03 (color PROM) for the Thomson MO5** ?
 
