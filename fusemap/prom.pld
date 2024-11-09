@@ -1,0 +1,61 @@
+GAL16V8    ; 
+COLRPROM   ; Logic compliant to the Thomson MO5 color PROM
+
+; SPDX-License-Identifier: CC0-1.0
+; (c) 2024 David SPORN
+
+; experimental -- 2024-11-04
+
+; pins
+; TODO : rename A0..A4 by there logical function : /INC ("incrustation", write over tv signal, active low) P ("pastel") B("blue") V("vert", green) R("red")
+;1   2   3   4   5   6   7   8   9   10
+NC  /INC  P  B  V  R  NC  NC  NC   GND
+
+;11 12  13  14  15  16  17  18  19   20
+/OE Q8  Q7  B2  B1  V2  V1  R2  R1   VCC
+
+
+; incrustation
+Q8 =   INC
+     + /P * /B * /V * /R
+
+; couleurs
+; ROUGE 
+; * %11 chaque fois que le bit rouge (a0) est activé
+; * sinon, %10 lorsque le bit pastel est est activé
+R1 =   /INC * R
+
+R2 =   /INC * R
+     + /INC * P 
+
+; VERT 
+; * %10 pour la couleur 15 (/INC)
+; * sinon, %11 chaque fois que le bit vert (a1) est activé
+; * sinon, %10 lorsque le bit pastel est activé
+
+V1 =   /INC * V
+     + /INC * P * /B * V * R
+     + /INC * P * B * V * /R
+
+V2 =   /INC * V
+     + /INC * P 
+
+; BLEU 
+; * %01 pour la couleur 15 (/INC)
+; * sinon, %11 chaque fois que le bit vert (a1) est activé
+; * sinon, %10 lorsque le bit pastel est activé
+B1 =   /INC * B
+     + /INC * P * B * V * R
+
+B2 =   /INC * B
+     + /INC * P * B * /V * R
+     + /INC * P * B * V * /R
+
+
+
+
+
+DESCRIPTION
+
+This is a logic compliant with the content of the PROM of the Thomson MO5 that
+converts a {incrustation, pastel, blue, green, red} into RGB-222 + Q8
