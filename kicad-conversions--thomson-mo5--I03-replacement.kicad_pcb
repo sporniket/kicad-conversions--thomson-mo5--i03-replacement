@@ -6,7 +6,13 @@
 
   (paper "A4" portrait)
   (title_block
+    (title "Replacement of I03 (color PROM) for the Thomson MO5")
     (date "2024-11-03")
+    (rev "v1.0.0-beta")
+    (company "Sporniket")
+    (comment 1 "#1")
+    (comment 3 "https://github.com/sporniket/kicad-conversions--thomson-mo5--i03-replacement")
+    (comment 4 "Original repository :")
   )
 
   (layers
@@ -359,6 +365,12 @@
     (stroke (width 0.1) (type default)) (layer "Edge.Cuts") (tstamp aab08f01-224a-4f3d-a857-357e352a604a))
   (gr_line (start 86.36 71.12) (end 86.36 99.695)
     (stroke (width 0.1) (type default)) (layer "Edge.Cuts") (tstamp f809cc32-bbf2-438f-a878-70b1083399a0))
+  (gr_text "CC0" (at 76.835 97.155) (layer "B.SilkS" knockout) (tstamp 36cbef38-c668-45f7-9493-fda80946d915)
+    (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify bottom mirror))
+  )
+  (gr_text "${COMMENT1}" (at 76.835 99.187) (layer "B.SilkS") (tstamp f3b4ef33-8824-4f77-b7f3-98793b3201e1)
+    (effects (font (size 1.5 1.5) (thickness 0.1875)) (justify bottom mirror))
+  )
 
   (segment (start 77.47 76.2) (end 76.2 76.2) (width 0.2) (layer "F.Cu") (net 1) (tstamp 4a6a2901-7db4-4ebc-975b-bc01182a0cf1))
   (segment (start 78.74 77.47) (end 77.47 76.2) (width 0.2) (layer "F.Cu") (net 1) (tstamp 68d7506b-4a76-447e-8e52-06d2d0b9a6c7))

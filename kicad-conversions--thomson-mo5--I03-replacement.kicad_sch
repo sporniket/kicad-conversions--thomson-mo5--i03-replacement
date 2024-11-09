@@ -5,7 +5,12 @@
   (paper "A4" portrait)
 
   (title_block
+    (title "Replacement of I03 (color PROM) for the Thomson MO5")
     (date "2024-11-03")
+    (rev "v1.0.0-draft")
+    (company "Sporniket")
+    (comment 3 "https://github.com/sporniket/kicad-conversions--thomson-mo5--i03-replacement")
+    (comment 4 "Original repository:")
   )
 
   (lib_symbols
