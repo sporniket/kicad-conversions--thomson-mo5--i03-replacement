@@ -106,6 +106,8 @@ bool on_action = false;
 uint8_t action_value = LOW;
 const uint8_t ACTION_COOLDOWN_START = 3;
 uint8_t action_cooldown = ACTION_COOLDOWN_START;
+bool action_is_performing = false;
+uint8_t action_remaining = 0;
 
 // -- -- A5 = Mode toggle ; 0-> Manual, 1-> Automatic
 const uint8_t INPUT_PIN_MODE_TOGGLE = 1;
@@ -209,6 +211,9 @@ void handleReadPhase() {
   data_value = data_buffer;
   // also update report.
   report_full_raw[address_value] = data_value;
+  if (action_is_performing && LOW == mode_value) {
+    emitSingleValueReport();
+  }
 
   // -- read user input pins
   on_action = readInputButton(INPUT_PIN_ACTION, action_value);
@@ -236,6 +241,7 @@ void handleWritePhase() {
   handleStatusLed();
   handlePower();
   handleAction();
+  emitAddress();
 }
 
 void handleStatusLed() {
@@ -266,8 +272,40 @@ void handlePower() {
 }
 
 void handleAction() {
-  if (!on_action)
+  // the handling is bogus, for now just
+  // emitSingleReport/incrementAddress/emitAddress
+  emitSingleValueReport();
+  incrementAddress();
+  emitAddress();
+  return;
+
+  // skip that
+  if (action_is_performing) {
+    if (action_remaining > 0) {
+      --action_remaining;
+    } else if (0 == address_value) {
+      emitFullReport();
+      action_is_performing = false;
+    }
+    incrementAddress();
+    emitAddress();
+  }
+  if (action_cooldown > 0) {
+    Serial.println("// -- cooldown > 0");
+    --action_cooldown;
     return;
+  }
+  if (!on_action) {
+    Serial.println("// -- on_action is false");
+    if (action_value == LOW) {
+      Serial.println("// -- action_value is LOW");
+    } else {
+      Serial.println("// -- action_value is HIGH");
+    }
+    return;
+  } else {
+    Serial.println("// -- on_action is true");
+  }
 
   if (LOW == mode_value) // manual mode
     handleAction_manual();
@@ -277,10 +315,27 @@ void handleAction() {
 
 void handleAction_manual() {
   // TODO
+  incrementAddress();
+  emitAddress();
+  action_is_performing = true;
 }
 
 void handleAction_auto() {
-  // TODO
+  if (!action_is_performing) {
+    address_value = 0;
+    action_is_performing = true;
+    action_remaining = 1;
+  }
+}
+
+void incrementAddress() { address_value = (address_value + 1) & 0x1F; }
+
+void emitAddress() {
+  uint8_t addr = address_value;
+  for (uint8_t i = 0; i < sizeof_ADDRESS_PINS; i++) {
+    digitalWrite(ADDRESS_PINS[i], (1 == (addr & 1)) ? HIGH : LOW);
+    addr = addr >> 1;
+  }
 }
 
 void emitFullReport() {
@@ -300,7 +355,9 @@ void emitFullReport() {
 }
 
 void emitSingleValueReport() {
-  Serial.println();
+  if (0 == address_value) {
+    Serial.println("// Report");
+  }
   Serial.print("data_of_prom[");
   Serial.print(address_value);
   Serial.print("] = 0b");
