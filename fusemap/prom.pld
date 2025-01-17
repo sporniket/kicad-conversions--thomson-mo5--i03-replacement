@@ -44,15 +44,20 @@ INCR =  SUPPLT * P
 ; ---
 ; bit 0
 ; --- 
-; * %11 chaque fois que le bit rouge (a0) est activé
-; * sinon, %10 lorsque le bit pastel est est activé
+; * %1 if R
+; * else %1 if color 4/6 (0,B,*,0) and 12 (P,B,0,0)
 R0   =  SUPPLT * R
-     +  SUPPLT * 
+     +  SUPPLT * /P *  B      * /R 
+     +  SUPPLT *  P *  B * /V * /R 
 
 ; bit 1
 ; ---
-R1 =   SUPPLT * R
-     + SUPPLT * P 
+; * %1 if R
+; * else %0 if color is 12 (P,B,0,0)
+; * else %1 if P
+R1   =  SUPPLT                *  R
+     +  SUPPLT *  P      *  G * /R
+     +  SUPPLT *  P * /B * /G * /R
 
 ; GREEN color
 ; ---
