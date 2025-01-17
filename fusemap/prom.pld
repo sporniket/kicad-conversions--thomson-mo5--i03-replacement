@@ -7,49 +7,86 @@ COLRPROM   ; Logic compliant to the Thomson MO5 color PROM
 ; experimental -- 2024-11-04
 
 ; pins
-; TODO : rename A0..A4 by there logical function : /INC ("incrustation", write over tv signal, active low) P ("pastel") B("blue") V("vert", green) R("red")
-;1   2   3   4   5   6   7   8   9   10
-NC  /INC  P  B  V  R  NC  NC  NC   GND
+; ---
+; INPUT pins
+; ---
+; SUPPLT : "SUPPrime Ligne Trame", Horizontal and Vertical blanking
+; P : "Pastel"
+; B : "Bleu", blue
+; V : "Vert", green 
+; R : "Rouge", red
+;1   2      3   4   5   6   7   8   9   10
+NC  SUPPLT  P   B   V   R  NC  NC  NC   GND
 
-;11 12  13  14  15  16  17  18  19   20
-/OE Q8  Q7  B2  B1  V2  V1  R2  R1   VCC
+; ---
+; OUTPUT pins
+; ---
+; INCR    : "INCRustation", enable the incrustation of TV signal (with proper extension)
+; R[1..0] : 2-bits red channel value
+; V[1..0] : 2-bits green channel value
+; B[1..0] : 2-bits blue channel value 
+;11 12      13  14  15  16  17  18  19  20
+/OE INCR    Q7  B1  B0  V1  V0  R1  R0  VCC
 
+; ---
+; LOGIC
+; ---
 
-; incrustation
-Q8 =   INC
-     + /P * /B * /V * /R
+; Incrustation
+; ---
+; Only when SUPPLT is 1 and (R,V,B) != (0,0,0)
+INCR =  SUPPLT * P 
+     +  SUPPLT * B
+     +  SUPPLT * V
+     +  SUPPLT * R
 
-; couleurs
-; ROUGE 
+; RED color
+; ---
+; bit 0
+; --- 
 ; * %11 chaque fois que le bit rouge (a0) est activé
 ; * sinon, %10 lorsque le bit pastel est est activé
-R1 =   /INC * R
+R0   =  SUPPLT * R
+     +  SUPPLT * 
 
-R2 =   /INC * R
-     + /INC * P 
+; bit 1
+; ---
+R1 =   SUPPLT * R
+     + SUPPLT * P 
 
-; VERT 
-; * %10 pour la couleur 15 (/INC)
+; GREEN color
+; ---
+; bit 0
+; --- 
+; * %10 pour la couleur 15 (SUPPLT)
 ; * sinon, %11 chaque fois que le bit vert (a1) est activé
 ; * sinon, %10 lorsque le bit pastel est activé
 
-V1 =   /INC * V
-     + /INC * P * /B * V * R
-     + /INC * P * B * V * /R
+V0 =   SUPPLT * V
+     + SUPPLT * P * /B * V * R
+     + SUPPLT * P * B * V * /R
 
-V2 =   /INC * V
-     + /INC * P 
+; bit 1
+; ---
+V1 =   SUPPLT * V
+     + SUPPLT * P 
 
-; BLEU 
-; * %01 pour la couleur 15 (/INC)
-; * sinon, %11 chaque fois que le bit vert (a1) est activé
-; * sinon, %10 lorsque le bit pastel est activé
-B1 =   /INC * B
-     + /INC * P * B * V * R
+; BLUE color
+; ---
+; bit 0
+; --- 
+; * %1 if B
+B0   =  SUPPLT * B
 
-B2 =   /INC * B
-     + /INC * P * B * /V * R
-     + /INC * P * B * V * /R
+; bit 1
+; ---
+; * %0 for color 15
+; * else %1 if B or P
+B1   =  SUPPLT * /P *  B
+     +  SUPPLT *  P * \B 
+     +  SUPPLT *  P *  B * /V * /R
+     +  SUPPLT *  P *  B * /V
+     +  SUPPLT *  P *  B      * /R
 
 
 
@@ -58,4 +95,39 @@ B2 =   /INC * B
 DESCRIPTION
 
 This is a logic compliant with the content of the PROM of the Thomson MO5 that
-converts a {incrustation, pastel, blue, green, red} into RGB-222 + Q8
+converts a {supplt, pastel, blue, green, red} into RGB-222 + INCR
+
+                   S P B G R          I   B  G  R
+data_of_prom[ 0 /* 0 0 0 0 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 1 /* 0 0 0 0 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 2 /* 0 0 0 1 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 3 /* 0 0 0 1 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 4 /* 0 0 1 0 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 5 /* 0 0 1 0 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 6 /* 0 0 1 1 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 7 /* 0 0 1 1 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 8 /* 0 1 0 0 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[ 9 /* 0 1 0 0 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[10 /* 0 1 0 1 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[11 /* 0 1 0 1 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[12 /* 0 1 1 0 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[13 /* 0 1 1 0 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[14 /* 0 1 1 1 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[15 /* 0 1 1 1 1 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[16 /* 1 0 0 0 0 */ ] = 0b0 0 00 00 00 ; // 	 0h0 	// 0
+data_of_prom[17 /* 1 0 0 0 1 */ ] = 0b1 0 00 00 11 ; // 	 0h83 	// 131
+data_of_prom[18 /* 1 0 0 1 0 */ ] = 0b1 0 00 11 00 ; // 	 0h8C 	// 140
+data_of_prom[19 /* 1 0 0 1 1 */ ] = 0b1 0 00 11 11 ; // 	 0h8F 	// 143
+data_of_prom[20 /* 1 0 1 0 0 */ ] = 0b1 0 11 01 01 ; // 	 0hB5 	// 181
+data_of_prom[21 /* 1 0 1 0 1 */ ] = 0b1 0 11 00 11 ; // 	 0hB3 	// 179
+data_of_prom[22 /* 1 0 1 1 0 */ ] = 0b1 0 11 11 01 ; // 	 0hBD 	// 189
+data_of_prom[23 /* 1 0 1 1 1 */ ] = 0b1 0 11 11 11 ; // 	 0hBF 	// 191
+data_of_prom[24 /* 1 1 0 0 0 */ ] = 0b1 0 10 10 10 ; // 	 0hAA 	// 170
+data_of_prom[25 /* 1 1 0 0 1 */ ] = 0b1 0 10 10 11 ; // 	 0hAB 	// 171
+data_of_prom[26 /* 1 1 0 1 0 */ ] = 0b1 0 10 11 10 ; // 	 0hAE 	// 174
+data_of_prom[27 /* 1 1 0 1 1 */ ] = 0b1 0 10 11 11 ; // 	 0hAF 	// 175
+data_of_prom[28 /* 1 1 1 0 0 */ ] = 0b1 0 11 10 01 ; // 	 0hB9 	// 185
+data_of_prom[29 /* 1 1 1 0 1 */ ] = 0b1 0 11 10 11 ; // 	 0hBB 	// 187
+data_of_prom[30 /* 1 1 1 1 0 */ ] = 0b1 0 11 11 10 ; // 	 0hBE 	// 190
+data_of_prom[31 /* 1 1 1 1 1 */ ] = 0b1 0 01 10 11 ; // 	 0h9B 	// 155
+
