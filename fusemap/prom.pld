@@ -58,18 +58,22 @@ R1 =   SUPPLT * R
 ; ---
 ; bit 0
 ; --- 
-; * %10 pour la couleur 15 (SUPPLT)
-; * sinon, %11 chaque fois que le bit vert (a1) est activé
+; * %0 for color 15 (P,B,V,R)
+; * else %1 if V
+; * else %1 if color 4 (0,B,0,0)
 ; * sinon, %10 lorsque le bit pastel est activé
 
-V0 =   SUPPLT * V
-     + SUPPLT * P * /B * V * R
-     + SUPPLT * P * B * V * /R
+V0   =  SUPPLT * /P      *  V 
+     +  SUPPLT * /P *  B * /V * /R
+     +  SUPPLT *  P * /B *  V * /R
+     +  SUPPLT *  P * /B *  V 
+     +  SUPPLT *  P      *  V * /R
 
 ; bit 1
 ; ---
-V1 =   SUPPLT * V
-     + SUPPLT * P 
+; * %1 if V or P
+V1   =  SUPPLT * V
+     +  SUPPLT * P 
 
 ; BLUE color
 ; ---
