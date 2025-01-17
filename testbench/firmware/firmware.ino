@@ -90,9 +90,9 @@ const uint8_t sizeof_ADDRESS_PINS =
     sizeof(ADDRESS_PINS) / sizeof(ADDRESS_PINS[0]);
 uint8_t address_value = 0;
 
-// -- data pins (inputs) : D7-D12, A7 ; D7 is MSB (bit 7), A7 is LSB,
+// -- data pins (inputs) : D7-D12, A1 ; A1 is MSB (bit 7), A7 is LSB,
 // bit 6 is always 0
-const uint8_t DATA_PINS[] = {7, 8, 9, 10, 11, 12, A7};
+const uint8_t DATA_PINS[] = {7, 8, 9, 10, 11, 12, A1};
 const uint8_t sizeof_DATA_PINS = sizeof(DATA_PINS) / sizeof(DATA_PINS[0]);
 uint8_t data_value = 0;
 
@@ -199,10 +199,10 @@ void handleReadPhase() {
   // -- read data pins
   uint8_t data_buffer = 0;
   for (uint8_t i = 0; i < sizeof_DATA_PINS; i++) {
+    data_buffer = data_buffer << 1;
     if (HIGH == digitalRead(DATA_PINS[i])) {
       data_buffer |= 1;
     }
-    data_buffer = data_buffer << 1;
     if (0 == i) {
       // skip bit 6
       data_buffer = data_buffer << 1;
@@ -360,7 +360,14 @@ void emitSingleValueReport() {
   }
   Serial.print("data_of_prom[");
   Serial.print(address_value);
+  Serial.print(" /* ");
+  Serial.print(address_value, BIN);
+  Serial.print(" */ ");
   Serial.print("] = 0b");
   Serial.print(report_full_raw[address_value], BIN);
-  Serial.println(" ;");
+  Serial.print(" ; // \t 0h");
+  Serial.print(report_full_raw[address_value], HEX);
+  Serial.print(" \t// ");
+  Serial.print(report_full_raw[address_value]);
+  Serial.println();
 }
