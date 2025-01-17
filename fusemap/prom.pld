@@ -56,8 +56,8 @@ R0   =  SUPPLT * R
 ; * else %0 if color is 12 (P,B,0,0)
 ; * else %1 if P
 R1   =  SUPPLT                *  R
-     +  SUPPLT *  P      *  G * /R
-     +  SUPPLT *  P * /B * /G * /R
+     +  SUPPLT *  P      *  V * /R
+     +  SUPPLT *  P * /B * /V * /R
 
 ; GREEN color
 ; ---
@@ -92,7 +92,7 @@ B0   =  SUPPLT * B
 ; * %0 for color 15
 ; * else %1 if B or P
 B1   =  SUPPLT * /P *  B
-     +  SUPPLT *  P * \B 
+     +  SUPPLT *  P * /B
      +  SUPPLT *  P *  B * /V * /R
      +  SUPPLT *  P *  B * /V
      +  SUPPLT *  P *  B      * /R
