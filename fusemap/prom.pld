@@ -16,7 +16,7 @@ COLRPROM   ; Logic compliant to the Thomson MO5 color PROM
 ; V : "Vert", green 
 ; R : "Rouge", red
 ;1   2      3   4   5   6   7   8   9   10
-NC  SUPPLT  P   B   V   R  NC  NC  NC   GND
+I1  I2  SUPPLT  P   B   V   R  NC  NC   GND
 
 ; ---
 ; OUTPUT pins
@@ -46,7 +46,7 @@ INCR =  SUPPLT * P
 ; --- 
 ; * %1 if R
 ; * else %1 if color 4/6 (0,B,*,0) and 12 (P,B,0,0)
-R0   =  SUPPLT * R
+R0   =  SUPPLT                *  R
      +  SUPPLT * /P *  B      * /R 
      +  SUPPLT *  P *  B * /V * /R 
 

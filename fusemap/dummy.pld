@@ -1,0 +1,91 @@
+GAL16V8    ; 
+COLRPROM   ; Logic compliant to the Thomson MO5 color PROM
+
+; SPDX-License-Identifier: CC0-1.0
+; (c) 2024 David SPORN
+
+; experimental -- 2024-11-04
+
+; pins
+; ---
+; INPUT pins
+; ---
+; SUPPLT : "SUPPrime Ligne Trame", Horizontal and Vertical blanking
+; P : "Pastel"
+; B : "Bleu", blue
+; V : "Vert", green 
+; R : "Rouge", red
+;1   2      3   4   5   6   7   8   9   10
+I1  I2  SUPPLT  P   B   V   R  NC  NC   GND
+
+; ---
+; OUTPUT pins
+; ---
+; INCR    : "INCRustation", enable the incrustation of TV signal (with proper extension)
+; R[1..0] : 2-bits red channel value
+; V[1..0] : 2-bits green channel value
+; B[1..0] : 2-bits blue channel value 
+;11 12      13  14  15  16  17  18  19  20
+/OE INCR    Q7  B1  B0  V1  V0  R1  R0  VCC
+
+; ---
+; LOGIC
+; ---
+
+; Incrustation
+; ---
+; Only when SUPPLT is 1 and (R,V,B) != (0,0,0)
+INCR =  SUPPLT
+
+; RED color
+; ---
+; bit 0
+; --- 
+; * %1 if R
+; * else %1 if color 4/6 (0,B,*,0) and 12 (P,B,0,0)
+R0   =  R
+
+; bit 1
+; ---
+; * %1 if R
+; * else %0 if color is 12 (P,B,0,0)
+; * else %1 if P
+R1   =  R
+
+; GREEN color
+; ---
+; bit 0
+; --- 
+; * %0 for color 15 (P,B,V,R)
+; * else %1 if V
+; * else %1 if color 4 (0,B,0,0)
+; * sinon, %10 lorsque le bit pastel est activé
+
+V0   =  V
+
+; bit 1
+; ---
+; * %1 if V or P
+V1   =  V 
+
+; BLUE color
+; ---
+; bit 0
+; --- 
+; * %1 if B
+B0   =  B
+
+; bit 1
+; ---
+; * %0 for color 15
+; * else %1 if B or P
+B1   =  B
+
+
+
+
+
+DESCRIPTION
+
+This is a dummy logic that echoes input bits.
+This allowed me to spot a problem with input pin naming.
