@@ -24,9 +24,9 @@
 // Main loop phases, alternating between read and write phases
 // ---
 // The main loop is processed 20 times per seconds, and each
-// processing is either : 
+// processing is either :
 //
-// * a read phase, when data lines and user input is read ; 
+// * a read phase, when data lines and user input is read ;
 // * or a write phase, when the address lines and
 //   the status led are updated, and reports may be sent to the
 //   Serial line.

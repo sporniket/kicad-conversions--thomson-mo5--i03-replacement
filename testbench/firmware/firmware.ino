@@ -172,9 +172,7 @@ void setupSerial() {
 // Main loop
 // =====================================================
 
-void loop() {
-  loopPhases();
-}
+void loop() { loopPhases(); }
 
 void handleReadPhase() {
   // Code to read inputs
