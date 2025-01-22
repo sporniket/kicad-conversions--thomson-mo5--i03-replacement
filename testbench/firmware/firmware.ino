@@ -90,17 +90,17 @@ const uint8_t sizeof_ADDRESS_PINS =
     sizeof(ADDRESS_PINS) / sizeof(ADDRESS_PINS[0]);
 uint8_t address_value = 0;
 
-// -- data pins (inputs) : D7-D12, A1 ; A1 is MSB (bit 7), A7 is LSB,
+// -- data pins (inputs) : D7-D12, A1 ; A1 is MSB (bit 7), A1 is LSB,
 // bit 6 is always 0
 const uint8_t DATA_PINS[] = {7, 8, 9, 10, 11, 12, A1};
 const uint8_t sizeof_DATA_PINS = sizeof(DATA_PINS) / sizeof(DATA_PINS[0]);
 uint8_t data_value = 0;
 
-// -- user input pins (buttons and toggle switches) : A6-A4 ;
-const uint8_t INPUT_PINS[] = {A6, A5, A4}; // A6-A4
+// -- user input pins (buttons and toggle switches) : A2, A5-A4 ;
+const uint8_t INPUT_PINS[] = {A2, A5, A4};
 const uint8_t sizeof_INPUT_PINS = sizeof(INPUT_PINS) / sizeof(INPUT_PINS[0]);
 
-// -- -- A6 = Action push-button
+// -- -- A2 = Action push-button
 const uint8_t INPUT_PIN_ACTION = 0;
 bool on_action = false;
 uint8_t action_value = LOW;
