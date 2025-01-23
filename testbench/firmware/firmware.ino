@@ -297,8 +297,20 @@ void emitSingleValueReport() {
     Serial.println("// Report");
   }
   Serial.print("data_of_prom[");
+  if (address_value < 10) {
+    Serial.print(" ");
+  }
   Serial.print(address_value);
   Serial.print(" /* ");
+  if (address_value < 2) {
+    Serial.print("0000");
+  } else if (address_value < 4) {
+    Serial.print("000");
+  } else if (address_value < 8) {
+    Serial.print("00");
+  } else if (address_value < 16) {
+    Serial.print("0");
+  }
   Serial.print(address_value, BIN);
   Serial.print(" */ ");
   Serial.print("] = 0b");
