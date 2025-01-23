@@ -51,10 +51,7 @@ const uint8_t sizeof_POWER_CONTROL_PINS =
     sizeof(POWER_CONTROL_PINS) / sizeof(POWER_CONTROL_PINS[0]);
 
 // -- address pins (outputs) : D2-D6 ; D2 is MSB, D6 is LSB
-const uint8_t ADDRESS_PINS[] = {6, 5, 4, 3, 2};
-const uint8_t sizeof_ADDRESS_PINS =
-    sizeof(ADDRESS_PINS) / sizeof(ADDRESS_PINS[0]);
-uint8_t address_value = 0;
+#include "Address.h"
 
 // -- data pins (inputs) : D7-D12, A1 ; A1 is MSB (bit 7), A1 is LSB,
 // bit 6 is always 0
@@ -112,10 +109,7 @@ void setupGpios() {
   }
 
   // -- address pins
-  for (uint8_t i = 0; i < sizeof_ADDRESS_PINS; i++) {
-    pinMode(ADDRESS_PINS[i], OUTPUT);
-    digitalWrite(ADDRESS_PINS[i], LOW); // Optional: set initial state
-  }
+  Address_setupGpios();
 
   // -- data pins
   for (uint8_t i = 0; i < sizeof_DATA_PINS; i++) {
@@ -158,9 +152,9 @@ void handleReadPhase() {
   }
   data_value = data_buffer;
   // also update report.
-  Report_registerValue(address_value, data_value);
+  Report_registerValue(Address_value, data_value);
   if (action_is_performing && LOW == mode_value) {
-    Report_emitSingleValue(address_value);
+    Report_emitSingleValue(Address_value);
   }
 
   // -- read user input pins
@@ -189,7 +183,6 @@ void handleWritePhase() {
   updateStatusLed();
   handlePower();
   handleAction();
-  emitAddress();
 }
 
 void handlePower() {
@@ -205,21 +198,19 @@ void handlePower() {
 void handleAction() {
   // the handling is bogus, for now just
   // emitSingleReport/incrementAddress/emitAddress
-  Report_emitSingleValue(address_value);
-  incrementAddress();
-  emitAddress();
+  Report_emitSingleValue(Address_value);
+  Address__loop();
   return;
 
   // skip that
   if (action_is_performing) {
     if (action_remaining > 0) {
       --action_remaining;
-    } else if (0 == address_value) {
+    } else if (0 == Address_value) {
       Report_emitFull();
       action_is_performing = false;
     }
-    incrementAddress();
-    emitAddress();
+    Address__loop();
   }
   if (action_cooldown > 0) {
     Serial.println("// -- cooldown > 0");
@@ -246,25 +237,14 @@ void handleAction() {
 
 void handleAction_manual() {
   // TODO
-  incrementAddress();
-  emitAddress();
+  Address__loop();
   action_is_performing = true;
 }
 
 void handleAction_auto() {
   if (!action_is_performing) {
-    address_value = 0;
+    Address_value = 0;
     action_is_performing = true;
     action_remaining = 1;
-  }
-}
-
-void incrementAddress() { address_value = (address_value + 1) & 0x1F; }
-
-void emitAddress() {
-  uint8_t addr = address_value;
-  for (uint8_t i = 0; i < sizeof_ADDRESS_PINS; i++) {
-    digitalWrite(ADDRESS_PINS[i], (1 == (addr & 1)) ? HIGH : LOW);
-    addr = addr >> 1;
   }
 }
