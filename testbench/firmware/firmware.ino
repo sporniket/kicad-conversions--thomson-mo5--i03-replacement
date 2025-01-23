@@ -32,34 +32,7 @@
 // ---
 // Status LED (the onboard LED) management
 // ---
-// The status LED is either a solid light (nothing to report)
-// or an animated blinking to report an OK (the data read from
-// an address is the same value as expected) or a KO (data read
-// from an address is different from expected value).
-// ---
-// Animations are described by an array of 10 values (HIGH or LOW),
-// the LED is updated ten times per seconds, thus each step is displayed
-// for 1/10 of second.
-
-// The OK animation is two quick blinks then a long pause.
-uint8_t STATUS_LED_SEQUENCE_PASS[] = {HIGH, LOW, HIGH, LOW, LOW,
-                                      LOW,  LOW, LOW,  LOW, LOW};
-
-// The KO animation is a slow, 50% duty cycle blink.
-uint8_t STATUS_LED_SEQUENCE_WRONG[] = {HIGH, HIGH, HIGH, HIGH, HIGH,
-                                       LOW,  LOW,  LOW,  LOW,  LOW};
-
-// Animation management
-// -- We keep track of the current animation
-uint8_t *StatusLed_sequence =
-    STATUS_LED_SEQUENCE_PASS; // NULL, STATUS_LED_SEQUENCE_PASS or
-                              // STATUS_LED_SEQUENCE_WRONG ;
-
-// -- The current step of the animation
-uint8_t StatusLed_index = 9;
-
-// -- The limit on which one goes back to step 0
-const uint8_t STATUS_LED_INDEX_MAX = 10;
+#include "StatusLed.h"
 
 // ---
 // Management of GPIOs
@@ -135,6 +108,7 @@ void setup() {
   // -- other setups
   setupGpios();
   setupSerial();
+  StatusLed_toPass();
 }
 
 void setupGpios() {
@@ -219,27 +193,10 @@ bool readToggleSwitch(uint8_t toggle, uint8_t &value) {
 
 void handleWritePhase() {
   // Code to update outputs
-  handleStatusLed();
+  updateStatusLed();
   handlePower();
   handleAction();
   emitAddress();
-}
-
-void handleStatusLed() {
-  if (NULL == StatusLed_sequence) {
-    // just switch on the LED
-    digitalWrite(LED_BUILTIN, HIGH);
-    return;
-  }
-  StatusLed_index++;
-  if (StatusLed_index >= STATUS_LED_INDEX_MAX) {
-    StatusLed_index = 0;
-  }
-  if (StatusLed_sequence[StatusLed_index]) {
-    digitalWrite(LED_BUILTIN, HIGH);
-  } else {
-    digitalWrite(LED_BUILTIN, LOW);
-  }
 }
 
 void handlePower() {
