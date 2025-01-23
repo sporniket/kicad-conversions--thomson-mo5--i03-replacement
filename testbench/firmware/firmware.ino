@@ -88,14 +88,7 @@ uint8_t powerEnable_value = LOW;
 // ---
 // Data report sent to serial
 // ---
-// When a full cycle (automatic mode) or a new address has been probed
-// (manual mode), a report is sent to serial ; either a full report
-// (automatic mode), either a single data point report (manual mode)
-// ---
-uint8_t report_full_raw[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                               0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-const uint8_t sizeof_report_full_raw =
-    sizeof(report_full_raw) / sizeof(report_full_raw[0]);
+#include "Report.h"
 
 // =====================================================
 // Prepare...
@@ -165,9 +158,9 @@ void handleReadPhase() {
   }
   data_value = data_buffer;
   // also update report.
-  report_full_raw[address_value] = data_value;
+  Report_registerValue(address_value, data_value);
   if (action_is_performing && LOW == mode_value) {
-    emitSingleValueReport();
+    Report_emitSingleValue(address_value);
   }
 
   // -- read user input pins
@@ -212,7 +205,7 @@ void handlePower() {
 void handleAction() {
   // the handling is bogus, for now just
   // emitSingleReport/incrementAddress/emitAddress
-  emitSingleValueReport();
+  Report_emitSingleValue(address_value);
   incrementAddress();
   emitAddress();
   return;
@@ -222,7 +215,7 @@ void handleAction() {
     if (action_remaining > 0) {
       --action_remaining;
     } else if (0 == address_value) {
-      emitFullReport();
+      Report_emitFull();
       action_is_performing = false;
     }
     incrementAddress();
@@ -274,50 +267,4 @@ void emitAddress() {
     digitalWrite(ADDRESS_PINS[i], (1 == (addr & 1)) ? HIGH : LOW);
     addr = addr >> 1;
   }
-}
-
-void emitFullReport() {
-  Serial.println();
-  Serial.println("// BEGIN Content of the color PROM of the Thomson MO5");
-  Serial.println("uint8_t data_of_prom[] = {");
-  for (uint8_t i = 0; i < sizeof_report_full_raw; i++) {
-    Serial.print("  0b");
-    Serial.print(report_full_raw[i], BIN);
-    if (i < sizeof_report_full_raw - 1) {
-      Serial.print(',');
-    }
-    Serial.println();
-  }
-  Serial.println("};");
-  Serial.println("// END Content of the color PROM of the Thomson MO5");
-}
-
-void emitSingleValueReport() {
-  if (0 == address_value) {
-    Serial.println("// Report");
-  }
-  Serial.print("data_of_prom[");
-  if (address_value < 10) {
-    Serial.print(" ");
-  }
-  Serial.print(address_value);
-  Serial.print(" /* ");
-  if (address_value < 2) {
-    Serial.print("0000");
-  } else if (address_value < 4) {
-    Serial.print("000");
-  } else if (address_value < 8) {
-    Serial.print("00");
-  } else if (address_value < 16) {
-    Serial.print("0");
-  }
-  Serial.print(address_value, BIN);
-  Serial.print(" */ ");
-  Serial.print("] = 0b");
-  Serial.print(report_full_raw[address_value], BIN);
-  Serial.print(" ; // \t 0h");
-  Serial.print(report_full_raw[address_value], HEX);
-  Serial.print(" \t// ");
-  Serial.print(report_full_raw[address_value]);
-  Serial.println();
 }
