@@ -35,6 +35,11 @@
 #include "StatusLed.h"
 
 // ---
+// Data report sent to serial
+// ---
+#include "Report.h"
+
+// ---
 // Management of GPIOs
 // ---
 // GPIOs are used for 4 tasks :
@@ -45,16 +50,16 @@
 // * User inputs (one action button and two toggle switches)
 // ---
 
-// -- Power control pins (outputs) : A0
-const uint8_t POWER_CONTROL_PINS[] = {A0};
-const uint8_t sizeof_POWER_CONTROL_PINS =
-    sizeof(POWER_CONTROL_PINS) / sizeof(POWER_CONTROL_PINS[0]);
-
 // -- address pins
 #include "Address.h"
 
 // -- data pins
 #include "Data.h"
+
+// -- Power control pins (outputs) : A0
+const uint8_t POWER_CONTROL_PINS[] = {A0};
+const uint8_t sizeof_POWER_CONTROL_PINS =
+    sizeof(POWER_CONTROL_PINS) / sizeof(POWER_CONTROL_PINS[0]);
 
 // -- user input pins (buttons and toggle switches) : A2, A5-A4 ;
 const uint8_t INPUT_PINS[] = {A2, A5, A4};
@@ -78,11 +83,6 @@ uint8_t mode_value = LOW;
 const uint8_t INPUT_PIN_POWER_ENABLE = 2;
 bool onchange_powerEnable = false;
 uint8_t powerEnable_value = LOW;
-
-// ---
-// Data report sent to serial
-// ---
-#include "Report.h"
 
 // =====================================================
 // Prepare...
