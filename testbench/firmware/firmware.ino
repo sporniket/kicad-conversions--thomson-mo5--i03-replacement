@@ -50,14 +50,11 @@ const uint8_t POWER_CONTROL_PINS[] = {A0};
 const uint8_t sizeof_POWER_CONTROL_PINS =
     sizeof(POWER_CONTROL_PINS) / sizeof(POWER_CONTROL_PINS[0]);
 
-// -- address pins (outputs) : D2-D6 ; D2 is MSB, D6 is LSB
+// -- address pins
 #include "Address.h"
 
-// -- data pins (inputs) : D7-D12, A1 ; A1 is MSB (bit 7), A1 is LSB,
-// bit 6 is always 0
-const uint8_t DATA_PINS[] = {7, 8, 9, 10, 11, 12, A1};
-const uint8_t sizeof_DATA_PINS = sizeof(DATA_PINS) / sizeof(DATA_PINS[0]);
-uint8_t data_value = 0;
+// -- data pins
+#include "Data.h"
 
 // -- user input pins (buttons and toggle switches) : A2, A5-A4 ;
 const uint8_t INPUT_PINS[] = {A2, A5, A4};
@@ -102,18 +99,13 @@ void setup() {
 }
 
 void setupGpios() {
+  Address_setupGpios();
+  Data_setupGpios();
+
   // -- power control pins
   for (uint8_t i = 0; i < sizeof_POWER_CONTROL_PINS; i++) {
     pinMode(POWER_CONTROL_PINS[i], OUTPUT);
     digitalWrite(POWER_CONTROL_PINS[i], LOW);
-  }
-
-  // -- address pins
-  Address_setupGpios();
-
-  // -- data pins
-  for (uint8_t i = 0; i < sizeof_DATA_PINS; i++) {
-    pinMode(DATA_PINS[i], INPUT);
   }
 
   // -- user input pins
@@ -136,23 +128,9 @@ void setupSerial() {
 void loop() { loopPhases(); }
 
 void handleReadPhase() {
-  // Code to read inputs
+  Data_read();
+  Report_registerValue(Address_value, Data_value);
 
-  // -- read data pins
-  uint8_t data_buffer = 0;
-  for (uint8_t i = 0; i < sizeof_DATA_PINS; i++) {
-    data_buffer = data_buffer << 1;
-    if (HIGH == digitalRead(DATA_PINS[i])) {
-      data_buffer |= 1;
-    }
-    if (0 == i) {
-      // skip bit 6
-      data_buffer = data_buffer << 1;
-    }
-  }
-  data_value = data_buffer;
-  // also update report.
-  Report_registerValue(Address_value, data_value);
   if (action_is_performing && LOW == mode_value) {
     Report_emitSingleValue(Address_value);
   }
