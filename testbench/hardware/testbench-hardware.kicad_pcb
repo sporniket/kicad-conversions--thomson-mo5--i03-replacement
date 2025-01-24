@@ -7,8 +7,8 @@
   (paper "A4" portrait)
   (title_block
     (title "Testbench for the Color PROM of the Thomson MO5")
-    (date "2024-12-06")
-    (rev "v0.0.1-DRAFT")
+    (date "2025-01-24")
+    (rev "v1.0.0")
     (company "Sporniket")
     (comment 2 "...tree/main/testbench/hardware")
     (comment 3 "https://github.com/sporniket/kicad-conversions--thomson-mo5--i03-replacement/...")
