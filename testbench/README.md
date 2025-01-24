@@ -24,7 +24,7 @@ Design goals :
 
 One particular parts for this PCB, selected because I have a lot of spares : the switches are [G-Switch SS-22F12-G060](https://www.lcsc.com/product-detail/Slide-Switches_G-Switch-SS-22F12-G060_C2848906.html)
 
-The ZIF socket may be directly soldered, or put in a standard narrow DIP-16 socket, for servicing or recycling this part.
+The ZIF socket may be directly soldered, or plugged in a standard narrow DIP-16 socket, for easier servicing or recycling of this part.
 
 ## Firmware project
 
