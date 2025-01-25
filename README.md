@@ -14,6 +14,7 @@ Content
 
 **Replacement of I03 (color PROM) for the Thomson MO5** replaces the PROM that is used to convert pixel colors represented as a 4 bits value (pastel, red, green, blue) and a supplemental bit for blanking signal, into a RGB-222 value and a supplemental trigger signal for the builtin analog video incrustation feature (requires a specific extension) of the Thomson MO5.
 
+![The replacement installed on the motherboard](./gallery/2025-01-25--01-prom-replacement-in-situ.jpg)
 
 ### Licence
 
