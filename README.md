@@ -25,6 +25,10 @@ You can copy, modify, distribute and perform the work, even for commercial purpo
 
 ### Release notes
 
+#### Release v1.0.0
+
+Contains schematics in PDF files, gerber archive, and the JED file.
+
 #### Release v1.0.0-rc1
 
 **Hardware only** 
