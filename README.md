@@ -26,6 +26,13 @@ You can copy, modify, distribute and perform the work, even for commercial purpo
 
 ### Release notes
 
+#### Release v2.0.0
+
+* Resolves #6 : Add a breakout connector with R[1..2], V[1..2] and B[1..2] for adding custom DAC mods
+
+Contains schematics in PDF files, gerber archive, and the JED file.
+
+
 #### Release v1.0.0
 
 Contains schematics in PDF files, gerber archive, and the JED file.
